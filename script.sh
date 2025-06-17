@@ -115,6 +115,11 @@ esac
 
 echo -e "${GREEN}✓ WSL Windsurf launcher setup complete!${RESET}"
 echo -e "Use: ${BLUE}wf /path/to/file_or_folder${RESET}"
-echo -e "Open a new terminal or run: ${BLUE}source ~/.${CURRENT_SHELL}rc${RESET} or restart your shell."
+case "$CURRENT_SHELL" in
+    zsh)  echo -e "Run: ${BLUE}source ~/.zshrc${RESET} or restart terminal." ;;
+    bash) echo -e "Run: ${BLUE}source ~/.bashrc${RESET} or restart terminal." ;;
+    fish) echo -e "Run: ${BLUE}source ~/.config/fish/config.fish${RESET} or restart terminal." ;;
+    *)    echo -e "Restart your terminal to apply changes." ;;
+esac
 
 exit 0
