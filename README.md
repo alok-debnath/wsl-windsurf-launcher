@@ -1,6 +1,6 @@
 # 🌊 wsl-windsurf-launcher
 
-A WSL helper that lets you quickly open files and folders in **WSL Remote** mode using [Windsurf](https://windsurf.com) with a single command: `wf`.
+A one-time setup WSL helper that lets you quickly open files and folders in **WSL Remote** mode using [Windsurf](https://windsurf.com) — all with a single command: wf.
 
 ---
 
