@@ -13,33 +13,21 @@ A one-time setup WSL helper that lets you quickly open files and folders in **WS
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Installation
 
-1. **Open any folder inside your WSL terminal**
+Run this single command in your WSL terminal:
 
-2. **Shallow clone this repository**
+```bash
+curl -sSL https://raw.githubusercontent.com/alok-debnath/wsl-windsurf-launcher/main/script.sh | bash
+```
 
-   ```bash
-   git clone --depth 1 https://github.com/alok-debnath/wsl-windsurf-launcher.git
-   ```
+Or if you prefer wget:
 
-3. **Change into the cloned folder**
+```bash
+wget -qO- https://raw.githubusercontent.com/alok-debnath/wsl-windsurf-launcher/main/script.sh | bash
+```
 
-   ```bash
-   cd wsl-windsurf-launcher
-   ```
-
-4. **Make the script executable**
-
-   ```bash
-   chmod +x script.sh
-   ```
-
-5. **Run the installer**
-
-   ```bash
-   ./script.sh
-   ```
+That's it! The script will handle everything automatically.
 
 > After installation, restart your terminal or run:
 >
@@ -78,8 +66,7 @@ The script automatically encodes the path and launches Windsurf with a `vscode-r
 
 ## ⭐ Show Some Love
 
-If this tool helped you, please consider giving this repo a ⭐
-Your support encourages further development and improvements!
+If this tool helped you, please consider giving this repo a ⭐ to support further development and improvements, and to help others who need it find this tool more easily.
 
 ---
 
