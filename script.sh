@@ -31,24 +31,28 @@ is_socket_stale() {
     
     # Try to use fuser to check if socket is in use
     if command -v fuser >/dev/null 2>&1; then
-        fuser "$socket_path" >/dev/null 2>&1
         # fuser returns 0 if processes are using the socket, 1 if not
-        [ $? -eq 1 ] && return 0  # Socket is stale
+        if ! fuser "$socket_path" >/dev/null 2>&1; then
+            return 0  # Socket is stale
+        fi
         return 1  # Socket is active
     fi
     
     # Try to use lsof as fallback
     if command -v lsof >/dev/null 2>&1; then
-        lsof "$socket_path" >/dev/null 2>&1
         # lsof returns 0 if socket is in use
-        [ $? -ne 0 ] && return 0  # Socket is stale
+        if ! lsof "$socket_path" >/dev/null 2>&1; then
+            return 0  # Socket is stale
+        fi
         return 1  # Socket is active
     fi
     
     # Last resort: try to connect to the socket using socat if available
     if command -v socat >/dev/null 2>&1; then
-        timeout 0.1 socat - UNIX-CONNECT:"$socket_path" </dev/null >/dev/null 2>&1
-        [ $? -ne 0 ] && return 0  # Connection failed, socket is stale
+        # Connection failure indicates socket is stale
+        if ! timeout 0.1 socat - UNIX-CONNECT:"$socket_path" </dev/null >/dev/null 2>&1; then
+            return 0  # Connection failed, socket is stale
+        fi
         return 1  # Connection succeeded, socket is active
     fi
     
