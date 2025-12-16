@@ -22,6 +22,82 @@ fi
 cat > ~/.local/bin/wf << 'EOF'
 #!/bin/bash
 
+# Function to check if a socket is stale
+is_socket_stale() {
+    local socket_path="$1"
+    
+    # If socket file doesn't exist, it's not stale (already cleaned)
+    [ ! -S "$socket_path" ] && return 1
+    
+    # Try to use fuser to check if socket is in use
+    if command -v fuser >/dev/null 2>&1; then
+        # fuser returns 0 if processes are using the socket, 1 if not
+        if ! fuser "$socket_path" >/dev/null 2>&1; then
+            return 0  # Socket is stale
+        fi
+        return 1  # Socket is active
+    fi
+    
+    # Try to use lsof as fallback
+    if command -v lsof >/dev/null 2>&1; then
+        # lsof returns 0 if socket is in use
+        if ! lsof "$socket_path" >/dev/null 2>&1; then
+            return 0  # Socket is stale
+        fi
+        return 1  # Socket is active
+    fi
+    
+    # Last resort: try to connect to the socket using socat if available
+    if command -v socat >/dev/null 2>&1; then
+        # Connection failure indicates socket is stale
+        if ! timeout 0.1 socat - UNIX-CONNECT:"$socket_path" </dev/null >/dev/null 2>&1; then
+            return 0  # Connection failed, socket is stale
+        fi
+        return 1  # Connection succeeded, socket is active
+    fi
+    
+    # If no tools available, assume socket might be active (conservative approach)
+    return 1
+}
+
+# Function to clean up stale IPC sockets
+cleanup_stale_sockets() {
+    local verbose="${1:-false}"
+    local runtime_dir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+    local cleaned=0
+    
+    if [ ! -d "$runtime_dir" ]; then
+        [ "$verbose" = "true" ] && echo "Runtime directory not found: $runtime_dir"
+        return 0
+    fi
+    
+    # Find all vscode-ipc-*.sock files
+    while IFS= read -r -d '' socket_file; do
+        if is_socket_stale "$socket_file"; then
+            rm -f "$socket_file" 2>/dev/null
+            if [ $? -eq 0 ]; then
+                cleaned=$((cleaned + 1))
+                [ "$verbose" = "true" ] && echo "Removed stale socket: $(basename "$socket_file")"
+            fi
+        fi
+    done < <(find "$runtime_dir" -maxdepth 1 -name "vscode-ipc-*.sock" -type s -print0 2>/dev/null)
+    
+    if [ $cleaned -gt 0 ]; then
+        echo "Cleaned up $cleaned stale IPC socket(s)"
+    elif [ "$verbose" = "true" ]; then
+        echo "No stale sockets found"
+    fi
+    
+    return 0
+}
+
+# Handle --clean or -c flag
+if [ "$1" = "--clean" ] || [ "$1" = "-c" ]; then
+    echo "Cleaning up stale IPC sockets..."
+    cleanup_stale_sockets true
+    exit 0
+fi
+
 # Detect WSL Distro name
 WSL_DISTRO=$(wsl.exe echo \$WSL_DISTRO_NAME 2>/dev/null | tr -d '\r')
 if [ -z "$WSL_DISTRO" ]; then
@@ -38,6 +114,9 @@ if [ -z "$WINDSURF_CMD" ]; then
     echo "ERROR: windsurf command not found in PATH" >&2
     exit 1
 fi
+
+# Automatically clean up stale sockets before launching
+cleanup_stale_sockets false
 
 if [ -z "$1" ]; then
     # No arguments - open a new window in WSL mode

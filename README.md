@@ -44,9 +44,17 @@ wf                # Opens a new window in Windsurf
 wf .              # Opens current directory
 wf ./file.txt     # Opens a specific file
 wf /path/to/dir   # Opens a specific directory
+wf --clean        # Manually clean up stale IPC sockets
+wf -c             # Short form of --clean
 ```
 
 The script automatically encodes the path and launches Windsurf with a `vscode-remote://wsl+<Distro>` URI.
+
+### Automatic Socket Cleanup
+
+The launcher automatically detects and cleans up stale IPC socket files (leftover from crashed or force-killed Windsurf instances) before launching. This prevents connection errors like "Error: connect ENOENT /run/user/1000/vscode-ipc-*.sock".
+
+You can also manually trigger cleanup using `wf --clean` or `wf -c`.
 
 ---
 
