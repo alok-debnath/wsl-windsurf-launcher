@@ -6,15 +6,15 @@ BLUE='\033[1;34m'
 YELLOW='\033[1;33m'
 RESET='\033[0m'
 
-echo -e "${BLUE}=== Setting up WSL Windsurf Launcher ===${RESET}"
+echo -e "${BLUE}=== Setting up WSL Devin Desktop Launcher ===${RESET}"
 
 # Create bin directory
 mkdir -p ~/.local/bin
 
-# Detect windsurf
-WINDSURF_CMD=$(command -v windsurf 2>/dev/null)
-if [ -z "$WINDSURF_CMD" ]; then
-    echo "ERROR: windsurf command not found in PATH" >&2
+# Detect devin-desktop
+DEVIN_DESKTOP_CMD=$(command -v devin-desktop 2>/dev/null)
+if [ -z "$DEVIN_DESKTOP_CMD" ]; then
+    echo "ERROR: devin-desktop command not found in PATH" >&2
     exit 1
 fi
 
@@ -109,9 +109,9 @@ if [ -z "$WSL_DISTRO" ]; then
     exit 1
 fi
 
-WINDSURF_CMD=$(command -v windsurf 2>/dev/null)
-if [ -z "$WINDSURF_CMD" ]; then
-    echo "ERROR: windsurf command not found in PATH" >&2
+DEVIN_DESKTOP_CMD=$(command -v devin-desktop 2>/dev/null)
+if [ -z "$DEVIN_DESKTOP_CMD" ]; then
+    echo "ERROR: devin-desktop command not found in PATH" >&2
     exit 1
 fi
 
@@ -120,7 +120,7 @@ cleanup_stale_sockets false
 
 if [ -z "$1" ]; then
     # No arguments - open a new window in WSL mode
-    "$WINDSURF_CMD" "--new-window" "--remote" "wsl+${WSL_DISTRO}"
+    "$DEVIN_DESKTOP_CMD" "--new-window" "--remote" "wsl+${WSL_DISTRO}"
     exit 0
 else
     TARGET_PATH=$(readlink -f "$1" 2>/dev/null || echo "$1")
@@ -141,7 +141,7 @@ fi
 ENCODED_PATH=$(python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1]))" "$TARGET_PATH")
 URI="vscode-remote://wsl+${WSL_DISTRO}$ENCODED_PATH"
 
-"$WINDSURF_CMD" "--$URI_SCHEME" "$URI"
+"$DEVIN_DESKTOP_CMD" "--$URI_SCHEME" "$URI"
 EOF
 
 chmod +x ~/.local/bin/wf
@@ -157,10 +157,10 @@ add_path_to_config() {
     if [ -f "$config_file" ]; then
         if ! grep -Fq 'export PATH="$HOME/.local/bin:$PATH"' "$config_file"; then
             echo "" >> "$config_file"
-            echo "# ====== Windsurf Launcher Config ======" >> "$config_file"
+            echo "# ====== Devin Desktop Launcher Config ======" >> "$config_file"
             echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$config_file"
-            echo "# ====== End of Windsurf Launcher Config ======" >> "$config_file"
-            echo -e "${GREEN}✓ Added Windsurf launcher to PATH in ${config_file} (${shell_name})${RESET}"
+            echo "# ====== End of Devin Desktop Launcher Config ======" >> "$config_file"
+            echo -e "${GREEN}✓ Added Devin Desktop launcher to PATH in ${config_file} (${shell_name})${RESET}"
         else
             echo "${shell_name} configuration already contains PATH update"
         fi
@@ -176,13 +176,13 @@ case "$CURRENT_SHELL" in
         ;;
     fish)
         fish_config="$HOME/.config/fish/config.fish"
-        if ! grep -Fq 'set -gx PATH $HOME/.local/bin $PATH' "$fish_config"; then
+        if ! grep -Fq '# ====== Devin Desktop Launcher Config ======' "$fish_config" 2>/dev/null; then
             mkdir -p "$(dirname "$fish_config")"
             echo "" >> "$fish_config"
-            echo "# ====== Windsurf Launcher Config ======" >> "$fish_config"
+            echo "# ====== Devin Desktop Launcher Config ======" >> "$fish_config"
             echo "set -gx PATH \$HOME/.local/bin \$PATH" >> "$fish_config"
-            echo "# ====== End of Windsurf Launcher Config ======" >> "$fish_config"
-            echo -e "${GREEN}✓ Added Windsurf launcher to PATH in ${fish_config} (fish)${RESET}"
+            echo "# ====== End of Devin Desktop Launcher Config ======" >> "$fish_config"
+            echo -e "${GREEN}✓ Added Devin Desktop launcher to PATH in ${fish_config} (fish)${RESET}"
         else
             echo "fish configuration already contains PATH update"
         fi
@@ -192,7 +192,7 @@ case "$CURRENT_SHELL" in
         ;;
 esac
 
-echo -e "${GREEN}✓ WSL Windsurf launcher setup complete!${RESET}"
+echo -e "${GREEN}✓ WSL Devin Desktop launcher setup complete!${RESET}"
 echo -e "Use: ${BLUE}wf /path/to/file_or_folder${RESET}"
 case "$CURRENT_SHELL" in
     zsh)  echo -e "Run: ${BLUE}source ~/.zshrc${RESET} or restart terminal." ;;
