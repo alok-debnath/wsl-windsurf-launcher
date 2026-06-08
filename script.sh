@@ -11,10 +11,10 @@ echo -e "${BLUE}=== Setting up WSL Windsurf Launcher ===${RESET}"
 # Create bin directory
 mkdir -p ~/.local/bin
 
-# Detect windsurf
-WINDSURF_CMD=$(command -v windsurf 2>/dev/null)
+# Detect windsurf or devin-desktop
+WINDSURF_CMD=$(command -v windsurf 2>/dev/null || command -v devin-desktop 2>/dev/null)
 if [ -z "$WINDSURF_CMD" ]; then
-    echo "ERROR: windsurf command not found in PATH" >&2
+    echo "ERROR: windsurf or devin-desktop command not found in PATH" >&2
     exit 1
 fi
 
@@ -109,9 +109,9 @@ if [ -z "$WSL_DISTRO" ]; then
     exit 1
 fi
 
-WINDSURF_CMD=$(command -v windsurf 2>/dev/null)
+WINDSURF_CMD=$(command -v windsurf 2>/dev/null || command -v devin-desktop 2>/dev/null)
 if [ -z "$WINDSURF_CMD" ]; then
-    echo "ERROR: windsurf command not found in PATH" >&2
+    echo "ERROR: windsurf or devin-desktop command not found in PATH" >&2
     exit 1
 fi
 

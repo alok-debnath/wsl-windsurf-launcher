@@ -60,7 +60,7 @@ You can also manually trigger cleanup using `wf --clean` or `wf -c`.
 
 ## 🛠️ Requirements
 
-* [Windsurf](https://windsurf.com) installed and available in WSL `$PATH`
+* [Windsurf](https://windsurf.com) or Devin (devin-desktop) installed and available in WSL `$PATH`
 * WSL2
 * Python 3 (for URL encoding)
 
