@@ -19,12 +19,53 @@ EDITOR_NAME=""
 EDITOR_CMD=""
 LAUNCHER_CMD=""
 
+UNINSTALL=false
 for arg in "$@"; do
     case "$arg" in
-        --editor=*)  EDITOR_CMD="${arg#--editor=}" ;;
-        --cmd=*)     LAUNCHER_CMD="${arg#--cmd=}" ;;
+        --editor=*)   EDITOR_CMD="${arg#--editor=}" ;;
+        --cmd=*)      LAUNCHER_CMD="${arg#--cmd=}" ;;
+        --uninstall)  UNINSTALL=true ;;
     esac
 done
+
+if [ "$UNINSTALL" = true ]; then
+    echo -e "${BLUE}=== WSL Editor Launcher Uninstall ===${RESET}"
+
+    FOUND=()
+    if [ -d "$HOME/.local/bin" ]; then
+        while IFS= read -r -d '' f; do
+            FOUND+=("$f")
+        done < <(grep -rlZ "# wsl-editor-launcher" "$HOME/.local/bin/" 2>/dev/null)
+    fi
+
+    if [ ${#FOUND[@]} -eq 0 ]; then
+        echo "No installed launcher commands found."
+    else
+        echo "Found launcher command(s):"
+        for f in "${FOUND[@]}"; do
+            echo "  - $(basename "$f")"
+        done
+        read -rp "Remove the above command(s)? [y/N]: " confirm </dev/tty
+        if [[ "$confirm" =~ ^[Yy]$ ]]; then
+            for f in "${FOUND[@]}"; do
+                rm -f "$f"
+                echo -e "${GREEN}✓ Removed $(basename "$f")${RESET}"
+            done
+        else
+            echo "Skipped binary removal."
+        fi
+    fi
+
+    for config in "$HOME/.zshrc" "$HOME/.bashrc" "$HOME/.config/fish/config.fish"; do
+        if [ -f "$config" ] && grep -q "# ====== wsl-launcher ======" "$config"; then
+            sed -i "/# ====== wsl-launcher ======/,/# ====== end wsl-launcher ======/d" "$config"
+            echo -e "${GREEN}✓ Cleaned PATH block from ${config}${RESET}"
+        fi
+    done
+
+    echo -e "${GREEN}Uninstall complete.${RESET}"
+    exit 0
+fi
 
 # Resolve display name for --editor= if not already set
 if [ -n "$EDITOR_CMD" ] && [ -z "$EDITOR_NAME" ]; then
@@ -118,6 +159,7 @@ mkdir -p ~/.local/bin
 # Create launcher
 cat > ~/.local/bin/${LAUNCHER_CMD} << EOF
 #!/bin/bash
+# wsl-editor-launcher
 
 EDITOR_CMD="$EDITOR_CMD"
 
@@ -174,7 +216,7 @@ cleanup_stale_sockets() {
     return 0
 }
 
-if [ "\$1" = "--clean" ] || [ "\$1" = "-c" ]; then
+if [ "\$1" = "--clean" ]; then
     echo "Cleaning up stale IPC sockets..."
     cleanup_stale_sockets true
     exit 0

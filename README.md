@@ -4,8 +4,6 @@ A one-time setup WSL helper that lets you quickly open files and folders in **WS
 
 Supports **Devin Desktop**, **Cursor**, **Windsurf**, **VS Code**, **VS Code Insiders**, **VSCodium**, or any other VSCode-based editor via `--editor=<cmd>`.
 
-> **Note:** This tool was originally built for Windsurf only, then expanded to support Devin Desktop (after the [June 2026 rebrand](https://devin.ai/blog/windsurf-is-now-devin-desktop/)), and eventually generalized to work with any VSCode-based editor.
-
 ---
 
 ## ✨ Features
@@ -14,6 +12,15 @@ Supports **Devin Desktop**, **Cursor**, **Windsurf**, **VS Code**, **VS Code Ins
 * Automatically detects your WSL distro.
 * Supports all common shells (`zsh`, `bash`, `fish`).
 * Adds a convenient launcher command to your terminal (default: `wf`, customizable).
+* Supports clean uninstall — removes all installed launcher commands and shell config entries.
+
+---
+
+## 🛠️ Requirements
+
+* A VSCode-based editor installed and available in WSL `$PATH` (Devin Desktop, Cursor, Windsurf, VS Code, VSCodium, etc.)
+* WSL2
+* Python 3 (for URL encoding)
 
 ---
 
@@ -52,7 +59,7 @@ By default the launcher installs as `wf`, but you can choose any name. The scrip
 
 ---
 
-## 🧪 Usage
+## 💻 Usage
 
 ```bash
 <cmd>                # Opens a new window in your configured editor
@@ -60,30 +67,32 @@ By default the launcher installs as `wf`, but you can choose any name. The scrip
 <cmd> ./file.txt     # Opens a specific file
 <cmd> /path/to/dir   # Opens a specific directory
 <cmd> --clean        # Manually clean up stale IPC sockets
-<cmd> -c             # Short form of --clean
 ```
 
 The script automatically encodes the path and launches your editor with a `vscode-remote://wsl+<Distro>` URI.
 
-### Automatic Socket Cleanup
-
-The launcher automatically detects and cleans up stale IPC socket files (leftover from crashed or force-killed editor instances) before launching. This prevents connection errors like "Error: connect ENOENT /run/user/1000/vscode-ipc-*.sock".
-
-You can also manually trigger cleanup using `<cmd> --clean` or `<cmd> -c`.
-
----
-
-## 🛠️ Requirements
-
-* A VSCode-based editor installed and available in WSL `$PATH` (Devin Desktop, Cursor, Windsurf, VS Code, VSCodium, etc.)
-* WSL2
-* Python 3 (for URL encoding)
+The launcher also automatically cleans up stale IPC socket files before each launch (leftover from crashed or force-killed editor instances), preventing errors like `Error: connect ENOENT /run/user/1000/vscode-ipc-*.sock`.
 
 ---
 
 ## ❓ Why `wf`?
 
 `wf` originated as a shorthand for **w**~~indsur~~**f** — this tool was originally built specifically for Windsurf, and `wf` was a natural, short command for it. As the tool expanded to support all VSCode-based editors, the default stayed `wf` since it was already familiar to existing users. You can always choose your own command name during setup.
+
+---
+
+## 🗑️ Uninstall
+
+To remove all installed launcher commands and clean up shell config entries:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/alok-debnath/wsl-editor-launcher/main/script.sh | bash -s -- --uninstall
+```
+
+This will:
+* Detect all launcher commands installed by this tool in `~/.local/bin`
+* Prompt for confirmation before removing them
+* Strip the PATH block from `~/.zshrc`, `~/.bashrc`, and `~/.config/fish/config.fish`
 
 ---
 
