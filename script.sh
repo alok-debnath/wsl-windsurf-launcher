@@ -51,12 +51,13 @@ if [ -z "$EDITOR_CMD" ]; then
     elif [ ${#FOUND_EDITORS[@]} -eq 1 ]; then
         EDITOR_CMD="${FOUND_EDITORS[0]%%:*}"
         EDITOR_NAME="${FOUND_EDITORS[0]##*:}"
+        echo -e "${GREEN}Auto-detected: ${BLUE}${EDITOR_NAME}${RESET}"
     else
         echo -e "${BLUE}Multiple editors found. Which would you like to set up?${RESET}"
         for i in "${!FOUND_EDITORS[@]}"; do
             echo "  $((i+1))) ${FOUND_EDITORS[$i]##*:}"
         done
-        read -rp "Enter choice [1-${#FOUND_EDITORS[@]}]: " choice
+        read -rp "Enter choice [1-${#FOUND_EDITORS[@]}]: " choice </dev/tty
         if ! [[ "$choice" =~ ^[0-9]+$ ]] || [ "$choice" -lt 1 ] || [ "$choice" -gt "${#FOUND_EDITORS[@]}" ]; then
             echo "Invalid choice. Exiting." >&2
             exit 1
@@ -74,7 +75,7 @@ fi
 
 # --- Command name selection ---
 if [ -z "$LAUNCHER_CMD" ]; then
-    read -rp "Enter command name to install [default: wf]: " input_cmd
+    read -rp "Enter command name to install [default: wf]: " input_cmd </dev/tty
     LAUNCHER_CMD="${input_cmd:-wf}"
 fi
 
@@ -86,7 +87,7 @@ fi
 while true; do
     if ! [[ "$LAUNCHER_CMD" =~ ^[a-zA-Z0-9_-]+$ ]]; then
         echo "Invalid name. Use only letters, numbers, dashes, and underscores."
-        read -rp "Enter command name: " LAUNCHER_CMD
+        read -rp "Enter command name: " LAUNCHER_CMD </dev/tty
         LAUNCHER_CMD="${LAUNCHER_CMD:-wf}"
         continue
     fi
@@ -98,11 +99,11 @@ while true; do
     echo "  1) Use '${LAUNCHER_CMD}' anyway"
     echo "  2) Enter a different name"
     echo "  3) Abort"
-    read -rp "Choose [1/2/3]: " conflict_choice
+    read -rp "Choose [1/2/3]: " conflict_choice </dev/tty
     case "$conflict_choice" in
         1) break ;;
         2)
-            read -rp "Enter new command name: " LAUNCHER_CMD
+            read -rp "Enter new command name: " LAUNCHER_CMD </dev/tty
             LAUNCHER_CMD="${LAUNCHER_CMD:-wf}"
             ;;
         *) echo "Aborted." >&2; exit 1 ;;

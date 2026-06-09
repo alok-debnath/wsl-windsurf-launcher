@@ -83,7 +83,7 @@ You can also manually trigger cleanup using `<cmd> --clean` or `<cmd> -c`.
 
 ## ❓ Why `wf`?
 
-`wf` originated as a shorthand for **w**~~indsur~~**f** — the former name of the editor. It's short, simple, and memorable. The name stuck even after the rebrand to Devin Desktop.
+`wf` originated as a shorthand for **w**~~indsur~~**f** — this tool was originally built specifically for Windsurf, and `wf` was a natural, short command for it. As the tool expanded to support all VSCode-based editors, the default stayed `wf` since it was already familiar to existing users. You can always choose your own command name during setup.
 
 ---
 
