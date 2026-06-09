@@ -1,4 +1,4 @@
-# 🌊 wsl-windsurf-launcher
+# 🌊 wsl-editor-launcher
 
 A one-time setup WSL helper that lets you quickly open files and folders in **WSL Remote** mode from any VSCode-based editor.
 
@@ -22,24 +22,24 @@ Supports **Devin Desktop**, **Cursor**, **Windsurf**, **VS Code**, **VS Code Ins
 Run this single command in your WSL terminal:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/alok-debnath/wsl-windsurf-launcher/main/script.sh | bash
+curl -sSL https://raw.githubusercontent.com/alok-debnath/wsl-editor-launcher/main/script.sh | bash
 ```
 
 Or if you prefer wget:
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/alok-debnath/wsl-windsurf-launcher/main/script.sh | bash
+wget -qO- https://raw.githubusercontent.com/alok-debnath/wsl-editor-launcher/main/script.sh | bash
 ```
 
 You can pass flags to skip prompts:
 
 ```bash
 # Force a specific editor
-curl -sSL https://raw.githubusercontent.com/alok-debnath/wsl-windsurf-launcher/main/script.sh | bash -s -- --editor=cursor
-curl -sSL https://raw.githubusercontent.com/alok-debnath/wsl-windsurf-launcher/main/script.sh | bash -s -- --editor=code
+curl -sSL https://raw.githubusercontent.com/alok-debnath/wsl-editor-launcher/main/script.sh | bash -s -- --editor=cursor
+curl -sSL https://raw.githubusercontent.com/alok-debnath/wsl-editor-launcher/main/script.sh | bash -s -- --editor=code
 
 # With a custom command name
-curl -sSL https://raw.githubusercontent.com/alok-debnath/wsl-windsurf-launcher/main/script.sh | bash -s -- --editor=cursor --cmd=cs
+curl -sSL https://raw.githubusercontent.com/alok-debnath/wsl-editor-launcher/main/script.sh | bash -s -- --editor=cursor --cmd=cs
 ```
 
 By default the launcher installs as `wf`, but you can choose any name. The script checks for conflicts before confirming your choice.
