@@ -95,17 +95,17 @@ while true; do
     if [ -z "$existing" ] || [ "$existing" = "$HOME/.local/bin/$LAUNCHER_CMD" ]; then
         break
     fi
-    echo -e "${YELLOW}Warning: '${LAUNCHER_CMD}' already exists at ${existing}${RESET}"
-    echo "  1) Use '${LAUNCHER_CMD}' anyway"
-    echo "  2) Enter a different name"
+    echo -e "${YELLOW}Warning: '${LAUNCHER_CMD}' already exists at ${existing} and will be overwritten.${RESET}"
+    echo "  1) Enter a different name"
+    echo "  2) Overwrite '${LAUNCHER_CMD}'"
     echo "  3) Abort"
     read -rp "Choose [1/2/3]: " conflict_choice </dev/tty
     case "$conflict_choice" in
-        1) break ;;
-        2)
+        1)
             read -rp "Enter new command name: " LAUNCHER_CMD </dev/tty
             LAUNCHER_CMD="${LAUNCHER_CMD:-wf}"
             ;;
+        2) break ;;
         *) echo "Aborted." >&2; exit 1 ;;
     esac
 done
